@@ -7,6 +7,7 @@ import logging
 import argparse
 import shutil
 import PIL.Image
+from natsort import natsorted
 
 class Comic:
     def __init__(self):
@@ -96,9 +97,8 @@ class Comic:
             exit()
 
     def get_cbz_files(self):
-        getkey = lambda name: float(os.path.basename(os.path.splitext(name)[0])[name.rfind("_c")+2:])
         files = [f for f in os.listdir(self.parent_dir) if f.lower().endswith("cbz")]
-        files.sort(key=getkey)
+        files = natsorted(files)
         if len(files) == 0:
             print("[-] No cbz files under [{}]".format(os.path.basename(self.parent_dir)))
         else:
@@ -106,16 +106,15 @@ class Comic:
             return files
 
     def get_image_files(self,dir):
-        getkey = lambda name: float(os.path.basename(os.path.splitext(name)[0])[name.rfind("_p")+2:])
-        files = [f for f in os.listdir(dir) if f.lower().endswith(".jpg") or f.lower.endswith(".png")]
-        files.sort(key=getkey)
+        files = [f for f in os.listdir(dir) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+        files = natsorted(files)
         logging.info("{} : {} files".format(dir,len(files)))
         return files
 
 
     def list_image(self,dir):
-        files = [f for f in os.listdir(dir) if f.lower().endswith(".jpg") or f.lower.endswith(".png")]
-        files.sort(key=lambda name: int(os.path.basename(os.path.splitext(name)[0])))
+        files = [f for f in os.listdir(dir) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+        files = natsorted(files)
         return files
 
     def extract_cbz(self,cbzfile):
